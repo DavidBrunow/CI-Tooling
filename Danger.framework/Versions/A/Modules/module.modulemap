@@ -1,0 +1,4 @@
+framework module Danger {
+  header "Danger-Swift.h"
+  requires objc
+}

@@ -1,0 +1,1291 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
+// swift-module-flags: -target x86_64-apple-macos14.4 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name Danger
+import Darwin.C
+import Darwin
+import Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public struct BitBucketMetadata : Swift.Decodable, Swift.Equatable {
+  public var pullRequestID: Swift.String
+  public var repoSlug: Swift.String
+  public static func == (a: Danger.BitBucketMetadata, b: Danger.BitBucketMetadata) -> Swift.Bool
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum SwiftLint {
+  public enum LintStyle {
+    case all(directory: Swift.String?)
+    case modifiedAndCreatedFiles(directory: Swift.String?)
+    case files([Danger.File])
+  }
+  public enum SwiftlintPath {
+    case swiftPackage(Swift.String)
+    case bin(Swift.String)
+  }
+  @available(*, deprecated, message: "Use the lint(_ lintStyle ..) method instead.")
+  @discardableResult
+  public static func lint(inline: Swift.Bool = false, directory: Swift.String? = nil, configFile: Swift.String? = nil, strict: Swift.Bool = false, quiet: Swift.Bool = true, lintAllFiles: Swift.Bool = false, swiftlintPath: Swift.String? = nil) -> [Danger.SwiftLintViolation]
+  @discardableResult
+  @available(*, deprecated, message: "Use the lint(_ lintStyle ..) method instead.")
+  public static func lint(_ lintStyle: Danger.SwiftLint.LintStyle = .modifiedAndCreatedFiles(directory: nil), inline: Swift.Bool = false, configFile: Swift.String? = nil, strict: Swift.Bool = false, quiet: Swift.Bool = true, swiftlintPath: Swift.String?) -> [Danger.SwiftLintViolation]
+  @discardableResult
+  public static func lint(_ lintStyle: Danger.SwiftLint.LintStyle = .modifiedAndCreatedFiles(directory: nil), inline: Swift.Bool = false, configFile: Swift.String? = nil, strict: Swift.Bool = false, quiet: Swift.Bool = true, swiftlintPath: Danger.SwiftLint.SwiftlintPath? = nil) -> [Danger.SwiftLintViolation]
+}
+public struct Violation : Swift.Encodable {
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct Meta : Swift.Encodable {
+  public init(runtimeName: Swift.String = "Danger Swift", runtimeHref: Swift.String = "https://danger.systems/swift")
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct SwiftLintViolation : Swift.Decodable {
+  public enum Severity : Swift.String, Swift.Decodable {
+    case warning
+    case error
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public var ruleID: Swift.String {
+    get
+  }
+  public var reason: Swift.String {
+    get
+  }
+  public var line: Swift.Int {
+    get
+  }
+  public var severity: Danger.SwiftLintViolation.Severity {
+    get
+  }
+  public var file: Swift.String {
+    get
+  }
+  public func toMarkdown() -> Swift.String
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DSL : Swift.Decodable {
+  public let danger: Danger.DangerDSL
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DangerDSL : Swift.Decodable {
+  public let git: Danger.Git
+  public var github: Danger.GitHub! {
+    get
+  }
+  public let bitbucketCloud: Danger.BitBucketCloud!
+  public let bitbucketServer: Danger.BitBucketServer!
+  public let gitLab: Danger.GitLab!
+  public let utils: Danger.DangerUtils
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DangerUtils {
+  public func readFile(_ file: Danger.File) -> Swift.String
+  public func lines(for string: Swift.String, inFile file: Danger.File) -> [Swift.Int]
+  public func exec(_ command: Swift.String, arguments: [Swift.String] = []) -> Swift.String
+  public func spawn(_ command: Swift.String, arguments: [Swift.String] = []) throws -> Swift.String
+  public func diff(forFile file: Swift.String, sourceBranch: Swift.String) -> Swift.Result<Danger.FileDiff, any Swift.Error>
+  public func sync<T>(_ body: (@escaping (T) -> Swift.Void) -> Swift.Void) -> T
+  public let environment: Danger.DangerUtils.Environment
+}
+extension Danger.DangerUtils {
+  @dynamicMemberLookup public struct Environment {
+    public subscript(dynamicMember member: Swift.String) -> Danger.DangerUtils.Environment.Value? {
+      get
+    }
+  }
+}
+extension Danger.DangerUtils.Environment {
+  public enum Value : Swift.CustomStringConvertible, Swift.Equatable {
+    case boolean(Swift.Bool)
+    case string(Swift.String)
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: Danger.DangerUtils.Environment.Value, b: Danger.DangerUtils.Environment.Value) -> Swift.Bool
+  }
+}
+extension Swift.Optional where Wrapped == Danger.DangerUtils.Environment.Value {
+  public func getString(default defaultString: Swift.String) -> Swift.String
+  public func getBoolean(default defaultBoolean: Swift.Bool) -> Swift.Bool
+}
+public struct GitLab : Swift.Decodable {
+  public enum CodingKeys : Swift.String, Swift.CodingKey {
+    case mergeRequest
+    case metadata
+    public init?(rawValue: Swift.String)
+    public init?(stringValue: Swift.String)
+    public init?(intValue: Swift.Int)
+    public typealias RawValue = Swift.String
+    public var intValue: Swift.Int? {
+      get
+    }
+    public var rawValue: Swift.String {
+      get
+    }
+    public var stringValue: Swift.String {
+      get
+    }
+  }
+  public let mergeRequest: Danger.GitLab.MergeRequest
+  public let metadata: Danger.GitLab.Metadata
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.GitLab {
+  public struct Metadata : Swift.Decodable, Swift.Equatable {
+    public let pullRequestID: Swift.String
+    public let repoSlug: Swift.String
+    public static func == (a: Danger.GitLab.Metadata, b: Danger.GitLab.Metadata) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitLab {
+  public struct MergeRequest : Swift.Decodable, Swift.Equatable {
+    public enum State : Swift.String, Swift.Decodable {
+      case closed
+      case locked
+      case merged
+      case opened
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public struct Milestone : Swift.Decodable, Swift.Equatable {
+      public enum ParentIdentifier : Swift.Equatable {
+        case group(Swift.Int)
+        case project(Swift.Int)
+        public var id: Swift.Int {
+          get
+        }
+        public var isGroup: Swift.Bool {
+          get
+        }
+        public var isProject: Swift.Bool {
+          get
+        }
+        public static func == (a: Danger.GitLab.MergeRequest.Milestone.ParentIdentifier, b: Danger.GitLab.MergeRequest.Milestone.ParentIdentifier) -> Swift.Bool
+      }
+      public enum CodingKeys : Swift.String, Swift.CodingKey {
+        case createdAt
+        case description
+        case dueDate
+        case id
+        case iid
+        case projectId
+        case groupId
+        case startDate
+        case state
+        case title
+        case updatedAt
+        case webUrl
+        public init?(rawValue: Swift.String)
+        public init?(stringValue: Swift.String)
+        public init?(intValue: Swift.Int)
+        public typealias RawValue = Swift.String
+        public var intValue: Swift.Int? {
+          get
+        }
+        public var rawValue: Swift.String {
+          get
+        }
+        public var stringValue: Swift.String {
+          get
+        }
+      }
+      public enum State : Swift.String, Swift.Decodable {
+        case active
+        case closed
+        public init?(rawValue: Swift.String)
+        public typealias RawValue = Swift.String
+        public var rawValue: Swift.String {
+          get
+        }
+      }
+      public let createdAt: Foundation.Date
+      public let description: Swift.String
+      public let dueDate: Foundation.Date?
+      public let id: Swift.Int
+      public let iid: Swift.Int
+      public let parent: Danger.GitLab.MergeRequest.Milestone.ParentIdentifier
+      public let startDate: Foundation.Date?
+      public let state: Danger.GitLab.MergeRequest.Milestone.State
+      public let title: Swift.String
+      public let updatedAt: Foundation.Date
+      public let webUrl: Swift.String
+      public static func == (a: Danger.GitLab.MergeRequest.Milestone, b: Danger.GitLab.MergeRequest.Milestone) -> Swift.Bool
+    }
+    public struct TimeStats : Swift.Decodable, Swift.Equatable {
+      public enum CodingKeys : Swift.String, Swift.CodingKey {
+        case humanTimeEstimate
+        case humanTimeSpent
+        case timeEstimate
+        case totalTimeSpent
+        public init?(rawValue: Swift.String)
+        public init?(stringValue: Swift.String)
+        public init?(intValue: Swift.Int)
+        public typealias RawValue = Swift.String
+        public var intValue: Swift.Int? {
+          get
+        }
+        public var rawValue: Swift.String {
+          get
+        }
+        public var stringValue: Swift.String {
+          get
+        }
+      }
+      public let humanTimeEstimate: Swift.String?
+      public let humanTimeSpent: Swift.String?
+      public let timeEstimate: Swift.Int
+      public let totalTimeSpent: Swift.Int
+      public static func == (a: Danger.GitLab.MergeRequest.TimeStats, b: Danger.GitLab.MergeRequest.TimeStats) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public struct DiffRefs : Swift.Decodable, Swift.Equatable {
+      public static func == (a: Danger.GitLab.MergeRequest.DiffRefs, b: Danger.GitLab.MergeRequest.DiffRefs) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public struct Pipeline : Swift.Decodable, Swift.Equatable {
+      public enum Status : Swift.String, Swift.Decodable {
+        case canceled
+        case failed
+        case pending
+        case running
+        case skipped
+        case success
+        public init?(rawValue: Swift.String)
+        public typealias RawValue = Swift.String
+        public var rawValue: Swift.String {
+          get
+        }
+      }
+      public enum CodingKeys : Swift.String, Swift.CodingKey {
+        case id
+        case ref
+        case sha
+        case status
+        case webUrl
+        public init?(rawValue: Swift.String)
+        public init?(stringValue: Swift.String)
+        public init?(intValue: Swift.Int)
+        public typealias RawValue = Swift.String
+        public var intValue: Swift.Int? {
+          get
+        }
+        public var rawValue: Swift.String {
+          get
+        }
+        public var stringValue: Swift.String {
+          get
+        }
+      }
+      public let id: Swift.Int
+      public let ref: Swift.String
+      public let sha: Swift.String
+      public let status: Danger.GitLab.MergeRequest.Pipeline.Status
+      public let webUrl: Swift.String
+      public static func == (a: Danger.GitLab.MergeRequest.Pipeline, b: Danger.GitLab.MergeRequest.Pipeline) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public enum CodingKeys : Swift.String, Swift.CodingKey {
+      case allowCollaboration
+      case allowMaintainerToPush
+      case approvalsBeforeMerge
+      case assignee
+      case assignees
+      case author
+      case changesCount
+      case closedAt
+      case closedBy
+      case description
+      case diffRefs
+      case downvotes
+      case firstDeployedToProductionAt
+      case forceRemoveSourceBranch
+      case id
+      case iid
+      case latestBuildStartedAt
+      case latestBuildFinishedAt
+      case labels
+      case mergeCommitSha
+      case mergedAt
+      case mergedBy
+      case mergeOnPipelineSuccess
+      case milestone
+      case pipeline
+      case projectId
+      case reviewers
+      case sha
+      case shouldRemoveSourceBranch
+      case sourceBranch
+      case sourceProjectId
+      case squash
+      case state
+      case subscribed
+      case targetBranch
+      case targetProjectId
+      case timeStats
+      case title
+      case upvotes
+      case userMergeData
+      case userNotesCount
+      case webUrl
+      case workInProgress
+      public init?(rawValue: Swift.String)
+      public init?(stringValue: Swift.String)
+      public init?(intValue: Swift.Int)
+      public typealias RawValue = Swift.String
+      public var intValue: Swift.Int? {
+        get
+      }
+      public var rawValue: Swift.String {
+        get
+      }
+      public var stringValue: Swift.String {
+        get
+      }
+    }
+    public let allowCollaboration: Swift.Bool?
+    public let allowMaintainerToPush: Swift.Bool?
+    public let approvalsBeforeMerge: Swift.Int?
+    public let assignee: Danger.GitLab.User?
+    public let assignees: [Danger.GitLab.User]?
+    public let author: Danger.GitLab.User
+    public let changesCount: Swift.String
+    public let closedAt: Foundation.Date?
+    public let closedBy: Danger.GitLab.User?
+    public let description: Swift.String
+    public let diffRefs: Danger.GitLab.MergeRequest.DiffRefs
+    public let downvotes: Swift.Int
+    public let firstDeployedToProductionAt: Foundation.Date?
+    public let forceRemoveSourceBranch: Swift.Bool?
+    public let id: Swift.Int
+    public let iid: Swift.Int
+    public let latestBuildFinishedAt: Foundation.Date?
+    public let latestBuildStartedAt: Foundation.Date?
+    public let labels: [Swift.String]
+    public let mergeCommitSha: Swift.String?
+    public let mergedAt: Foundation.Date?
+    public let mergedBy: Danger.GitLab.User?
+    public let mergeOnPipelineSuccess: Swift.Bool
+    public let milestone: Danger.GitLab.MergeRequest.Milestone?
+    public let pipeline: Danger.GitLab.MergeRequest.Pipeline?
+    public let projectId: Swift.Int
+    public let reviewers: [Danger.GitLab.User]?
+    public let sha: Swift.String
+    public let shouldRemoveSourceBranch: Swift.Bool?
+    public let sourceBranch: Swift.String
+    public let sourceProjectId: Swift.Int
+    public let squash: Swift.Bool?
+    public let state: Danger.GitLab.MergeRequest.State
+    public let subscribed: Swift.Bool
+    public let targetBranch: Swift.String
+    public let targetProjectId: Swift.Int
+    public let timeStats: Danger.GitLab.MergeRequest.TimeStats
+    public let title: Swift.String
+    public let upvotes: Swift.Int
+    public let userNotesCount: Swift.Int
+    public let webUrl: Swift.String
+    public let workInProgress: Swift.Bool
+    public var userCanMerge: Swift.Bool {
+      get
+    }
+    public static func == (a: Danger.GitLab.MergeRequest, b: Danger.GitLab.MergeRequest) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitLab {
+  public struct User : Swift.Decodable, Swift.Equatable {
+    public enum CodingKeys : Swift.String, Swift.CodingKey {
+      case avatarUrl
+      case id
+      case name
+      case state
+      case username
+      case webUrl
+      public init?(rawValue: Swift.String)
+      public init?(stringValue: Swift.String)
+      public init?(intValue: Swift.Int)
+      public typealias RawValue = Swift.String
+      public var intValue: Swift.Int? {
+        get
+      }
+      public var rawValue: Swift.String {
+        get
+      }
+      public var stringValue: Swift.String {
+        get
+      }
+    }
+    public enum State : Swift.String, Swift.Decodable {
+      case active
+      case blocked
+      case deactivated
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public let avatarUrl: Swift.String?
+    public let id: Swift.Int
+    public let name: Swift.String
+    public let state: Danger.GitLab.User.State
+    public let username: Swift.String
+    public let webUrl: Swift.String
+    public static func == (a: Danger.GitLab.User, b: Danger.GitLab.User) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitLab.MergeRequest.Milestone {
+  public init(from decoder: any Swift.Decoder) throws
+}
+public func Danger() -> Danger.DangerDSL
+public struct Result : Swift.Equatable, Swift.Hashable {
+  public enum Category {
+    case warning, error, message
+    public static func == (a: Danger.Result.Category, b: Danger.Result.Category) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public let message: Swift.String
+  public let file: Swift.String?
+  public let line: Swift.Int?
+  public let category: Danger.Result.Category
+  public static func == (a: Danger.Result, b: Danger.Result) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FileDiff : Swift.Equatable, Swift.CustomStringConvertible {
+  public var filePath: Swift.String {
+    get
+  }
+  public var changes: Danger.FileDiff.Changes {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+  public static func == (a: Danger.FileDiff, b: Danger.FileDiff) -> Swift.Bool
+}
+extension Danger.FileDiff {
+  public enum Changes : Swift.Equatable {
+    case created(addedLines: [Swift.String])
+    case deleted(deletedLines: [Swift.String])
+    case modified(hunks: [Danger.FileDiff.Hunk])
+    case renamed(oldPath: Swift.String, hunks: [Danger.FileDiff.Hunk])
+    public static func == (a: Danger.FileDiff.Changes, b: Danger.FileDiff.Changes) -> Swift.Bool
+  }
+  public struct Hunk : Swift.Equatable, Swift.CustomStringConvertible {
+    public let oldLineStart: Swift.Int
+    public let oldLineSpan: Swift.Int
+    public let newLineStart: Swift.Int
+    public let newLineSpan: Swift.Int
+    public let lines: [Danger.FileDiff.Line]
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: Danger.FileDiff.Hunk, b: Danger.FileDiff.Hunk) -> Swift.Bool
+  }
+  public struct Line : Swift.Equatable, Swift.CustomStringConvertible {
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: Danger.FileDiff.Line, b: Danger.FileDiff.Line) -> Swift.Bool
+  }
+}
+public struct BitBucketCloud : Swift.Decodable {
+  public let activities: [Danger.BitBucketCloud.Activity]
+  public let comments: [Danger.BitBucketCloud.Comment]
+  public let commits: [Danger.BitBucketCloud.Commit]
+  public let metadata: Danger.BitBucketMetadata
+  public let pr: Danger.BitBucketCloud.PullRequest
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.BitBucketCloud {
+  public struct PullRequest : Swift.Decodable {
+    public enum State : Swift.String, Swift.Decodable {
+      case declined
+      case merged
+      case open
+      case suspended
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public struct Participant : Swift.Decodable, Swift.Equatable {
+      public enum Role : Swift.String, Swift.Decodable {
+        case reviewer
+        case participant
+        public init?(rawValue: Swift.String)
+        public typealias RawValue = Swift.String
+        public var rawValue: Swift.String {
+          get
+        }
+      }
+      public let approved: Swift.Bool
+      public let role: Danger.BitBucketCloud.PullRequest.Participant.Role
+      public let user: Danger.BitBucketCloud.User
+      public static func == (a: Danger.BitBucketCloud.PullRequest.Participant, b: Danger.BitBucketCloud.PullRequest.Participant) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public let author: Danger.BitBucketCloud.User
+    public let createdOn: Foundation.Date
+    public let description: Swift.String
+    public let destination: Danger.BitBucketCloud.MergeRef
+    public let id: Swift.Int
+    public let participants: [Danger.BitBucketCloud.PullRequest.Participant]
+    public let reviewers: [Danger.BitBucketCloud.User]
+    public let source: Danger.BitBucketCloud.MergeRef
+    public let state: Danger.BitBucketCloud.PullRequest.State
+    public let title: Swift.String
+    public let updatedOn: Foundation.Date
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct MergeRef : Swift.Decodable {
+    public var branchName: Swift.String {
+      get
+    }
+    public var commitHash: Swift.String {
+      get
+    }
+    public let repository: Danger.BitBucketCloud.Repo
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct Repo : Swift.Decodable, Swift.Equatable {
+    public let fullName: Swift.String
+    public let name: Swift.String
+    public let uuid: Swift.String
+    public static func == (a: Danger.BitBucketCloud.Repo, b: Danger.BitBucketCloud.Repo) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct User : Swift.Decodable, Swift.Equatable {
+    public let accountId: Swift.String?
+    public let displayName: Swift.String
+    public let nickname: Swift.String?
+    public let uuid: Swift.String
+    public static func == (a: Danger.BitBucketCloud.User, b: Danger.BitBucketCloud.User) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct Commit : Swift.Decodable, Swift.Equatable {
+    public struct Author : Swift.Decodable, Swift.Equatable {
+      public static func == (a: Danger.BitBucketCloud.Commit.Author, b: Danger.BitBucketCloud.Commit.Author) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public struct Parent {
+    }
+    public let author: Danger.BitBucketCloud.Commit.Author
+    public let date: Foundation.Date
+    public let hash: Swift.String
+    public let message: Swift.String
+    public static func == (a: Danger.BitBucketCloud.Commit, b: Danger.BitBucketCloud.Commit) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct Comment : Swift.Decodable, Swift.Equatable {
+    public struct Inline : Swift.Decodable, Swift.Equatable {
+      public let from: Swift.Int?
+      public let to: Swift.Int?
+      public let path: Swift.String?
+      public static func == (a: Danger.BitBucketCloud.Comment.Inline, b: Danger.BitBucketCloud.Comment.Inline) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public let content: Danger.BitBucketCloud.Content
+    public let createdOn: Foundation.Date
+    public let deleted: Swift.Bool
+    public let id: Swift.Int
+    public let inline: Danger.BitBucketCloud.Comment.Inline?
+    public let type: Swift.String
+    public let updatedOn: Foundation.Date
+    public let user: Danger.BitBucketCloud.User
+    public static func == (a: Danger.BitBucketCloud.Comment, b: Danger.BitBucketCloud.Comment) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct Content : Swift.Decodable, Swift.Equatable {
+    public let html: Swift.String
+    public let markup: Swift.String
+    public let raw: Swift.String
+    public static func == (a: Danger.BitBucketCloud.Content, b: Danger.BitBucketCloud.Content) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketCloud {
+  public struct Activity : Swift.Decodable, Swift.Equatable {
+    public let comment: Danger.BitBucketCloud.Comment?
+    public static func == (a: Danger.BitBucketCloud.Activity, b: Danger.BitBucketCloud.Activity) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+public struct GitHub : Swift.Decodable {
+  public let issue: Danger.GitHub.Issue
+  public let pullRequest: Danger.GitHub.PullRequest
+  public let commits: [Danger.GitHub.Commit]
+  public let reviews: [Danger.GitHub.Review]
+  public let requestedReviewers: Danger.GitHub.RequestedReviewers
+  public var api: Any! {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.GitHub {
+  public struct PullRequest : Swift.Decodable, Swift.Equatable {
+    public enum PullRequestState : Swift.String, Swift.Decodable {
+      case open
+      case closed
+      case merged
+      case locked
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public let number: Swift.Int
+    public let title: Swift.String
+    public let body: Swift.String?
+    public let user: Danger.GitHub.User
+    public let assignee: Danger.GitHub.User?
+    public let assignees: [Danger.GitHub.User]?
+    public let createdAt: Foundation.Date
+    public let updatedAt: Foundation.Date
+    public let closedAt: Foundation.Date?
+    public let mergedAt: Foundation.Date?
+    public let head: Danger.GitHub.MergeRef
+    public let base: Danger.GitHub.MergeRef
+    public let state: Danger.GitHub.PullRequest.PullRequestState
+    public let isLocked: Swift.Bool
+    public let isMerged: Swift.Bool?
+    public let commitCount: Swift.Int?
+    public let commentCount: Swift.Int?
+    public let reviewCommentCount: Swift.Int?
+    public let additions: Swift.Int?
+    public let deletions: Swift.Int?
+    public let changedFiles: Swift.Int?
+    public let milestone: Danger.GitHub.Milestone?
+    public let htmlUrl: Swift.String
+    public let draft: Swift.Bool?
+    public let links: Danger.GitHub.PullRequest.Link
+    public static func == (a: Danger.GitHub.PullRequest, b: Danger.GitHub.PullRequest) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub.PullRequest {
+  public struct Link : Swift.Decodable, Swift.Equatable {
+    public struct Relation : Swift.Decodable, Swift.Equatable, Swift.ExpressibleByStringLiteral {
+      public let href: Swift.String
+      public init(stringLiteral value: Swift.String)
+      public static func == (a: Danger.GitHub.PullRequest.Link.Relation, b: Danger.GitHub.PullRequest.Link.Relation) -> Swift.Bool
+      public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+      public typealias StringLiteralType = Swift.String
+      public typealias UnicodeScalarLiteralType = Swift.String
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public let `self`: Danger.GitHub.PullRequest.Link.Relation
+    public let html: Danger.GitHub.PullRequest.Link.Relation
+    public let issue: Danger.GitHub.PullRequest.Link.Relation
+    public let comments: Danger.GitHub.PullRequest.Link.Relation
+    public let reviewComments: Danger.GitHub.PullRequest.Link.Relation
+    public let reviewComment: Danger.GitHub.PullRequest.Link.Relation
+    public let commits: Danger.GitHub.PullRequest.Link.Relation
+    public let statuses: Danger.GitHub.PullRequest.Link.Relation
+    public static func == (a: Danger.GitHub.PullRequest.Link, b: Danger.GitHub.PullRequest.Link) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct User : Swift.Decodable, Swift.Equatable {
+    public enum UserType : Swift.String, Swift.Decodable {
+      case user
+      case organization
+      case bot
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public let id: Swift.Int
+    public let login: Swift.String
+    public let userType: Danger.GitHub.User.UserType
+    public static func == (a: Danger.GitHub.User, b: Danger.GitHub.User) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct Team : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let name: Swift.String
+    public static func == (a: Danger.GitHub.Team, b: Danger.GitHub.Team) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct RequestedReviewers : Swift.Decodable, Swift.Equatable {
+    public let users: [Danger.GitHub.User]
+    public let teams: [Danger.GitHub.Team]
+    public static func == (a: Danger.GitHub.RequestedReviewers, b: Danger.GitHub.RequestedReviewers) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct MergeRef : Swift.Decodable, Swift.Equatable {
+    public let label: Swift.String
+    public let ref: Swift.String
+    public let sha: Swift.String
+    public let user: Danger.GitHub.User
+    public let repo: Danger.GitHub.Repo
+    public static func == (a: Danger.GitHub.MergeRef, b: Danger.GitHub.MergeRef) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct Repo : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let name: Swift.String
+    public let fullName: Swift.String
+    public let owner: Danger.GitHub.User
+    public let isPrivate: Swift.Bool
+    public let description: Swift.String?
+    public let isFork: Swift.Bool
+    public let htmlURL: Swift.String
+    public static func == (a: Danger.GitHub.Repo, b: Danger.GitHub.Repo) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct Review : Swift.Decodable, Swift.Equatable {
+    public enum State : Swift.String, Swift.Decodable {
+      case approved
+      case requestedChanges
+      case comment
+      case pending
+      case dismissed
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public let body: Swift.String?
+    public let commitId: Swift.String?
+    public let id: Swift.Int?
+    public let state: Danger.GitHub.Review.State?
+    public let submittedAt: Foundation.Date
+    public let user: Danger.GitHub.User
+    public static func == (a: Danger.GitHub.Review, b: Danger.GitHub.Review) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct Commit : Swift.Decodable, Swift.Equatable {
+    public let sha: Swift.String
+    public let commit: Danger.GitHub.Commit.CommitData
+    public let url: Swift.String
+    public let author: Danger.GitHub.User?
+    public let committer: Danger.GitHub.User?
+    public init(from decoder: any Swift.Decoder) throws
+    public static func == (a: Danger.GitHub.Commit, b: Danger.GitHub.Commit) -> Swift.Bool
+  }
+}
+extension Danger.GitHub.Commit {
+  public struct CommitData : Swift.Equatable, Swift.Decodable {
+    public let sha: Swift.String?
+    public let author: Danger.Git.Commit.Author
+    public let committer: Danger.Git.Commit.Author
+    public let message: Swift.String
+    public let parents: [Swift.String]?
+    public let url: Swift.String
+    public let verification: Danger.GitHub.Commit.CommitData.Verification
+    public static func == (a: Danger.GitHub.Commit.CommitData, b: Danger.GitHub.Commit.CommitData) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub.Commit.CommitData {
+  public enum Verification : Swift.Equatable, Swift.Decodable {
+    case verified(signature: Swift.String, payload: Swift.String)
+    case unverified(Danger.GitHub.Commit.CommitData.Verification.UnverifiedReason)
+    public init(from decoder: any Swift.Decoder) throws
+    public static func == (a: Danger.GitHub.Commit.CommitData.Verification, b: Danger.GitHub.Commit.CommitData.Verification) -> Swift.Bool
+  }
+}
+extension Danger.GitHub.Commit.CommitData.Verification {
+  public enum UnverifiedReason : Swift.String, Swift.Decodable {
+    case expiredKey
+    case notSigningKey
+    case gpgVerifyError
+    case gpgVerifyUnavailable
+    case unsigned
+    case unknownSignatureType
+    case noUser
+    case unverifiedEmail
+    case badEmail
+    case unknownKey
+    case malformedSignature
+    case invalid
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+}
+extension Danger.GitHub {
+  public struct Issue : Swift.Decodable, Swift.Equatable {
+    public enum State : Swift.String, Swift.Decodable {
+      case open
+      case closed
+      case locked
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public struct Label : Swift.Decodable, Swift.Equatable {
+      public let id: Swift.Int
+      public let url: Swift.String
+      public let name: Swift.String
+      public let color: Swift.String
+      public static func == (a: Danger.GitHub.Issue.Label, b: Danger.GitHub.Issue.Label) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public let id: Swift.Int
+    public let number: Swift.Int
+    public let title: Swift.String
+    public let user: Danger.GitHub.User
+    public let state: Danger.GitHub.Issue.State
+    public let isLocked: Swift.Bool
+    public let body: Swift.String?
+    public let commentCount: Swift.Int
+    public let assignee: Danger.GitHub.User?
+    public let assignees: [Danger.GitHub.User]
+    public let milestone: Danger.GitHub.Milestone?
+    public let createdAt: Foundation.Date
+    public let updatedAt: Foundation.Date
+    public let closedAt: Foundation.Date?
+    public let labels: [Danger.GitHub.Issue.Label]
+    public static func == (a: Danger.GitHub.Issue, b: Danger.GitHub.Issue) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.GitHub {
+  public struct Milestone : Swift.Decodable, Swift.Equatable {
+    public enum State : Swift.String, Swift.Decodable {
+      case open
+      case closed
+      case all
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public let id: Swift.Int
+    public let number: Swift.Int
+    public let state: Danger.GitHub.Milestone.State
+    public let title: Swift.String
+    public let description: Swift.String?
+    public let creator: Danger.GitHub.User
+    public let openIssues: Swift.Int
+    public let closedIssues: Swift.Int
+    public let createdAt: Foundation.Date
+    public let updatedAt: Foundation.Date
+    public let closedAt: Foundation.Date?
+    public let dueOn: Foundation.Date?
+    public static func == (a: Danger.GitHub.Milestone, b: Danger.GitHub.Milestone) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+public typealias File = Swift.String
+extension Swift.String {
+  public var fileType: Danger.FileType? {
+    get
+  }
+  public var name: Swift.String {
+    get
+  }
+}
+public enum FileType : Swift.String, Swift.Equatable, Swift.CaseIterable {
+  case h, json, m, markdown, mm, pbxproj, plist, storyboard, swift, xcscheme, yaml, yml
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Danger.FileType]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Danger.FileType] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Danger.FileType {
+  public var `extension`: Swift.String {
+    get
+  }
+}
+public struct BitBucketServer : Swift.Decodable, Swift.Equatable {
+  public let metadata: Danger.BitBucketMetadata
+  public let pullRequest: Danger.BitBucketServer.PullRequest
+  public let commits: [Danger.BitBucketServer.Commit]
+  public let comments: [Danger.BitBucketServer.Comment]
+  public let activities: [Danger.BitBucketServer.Activity]
+  public static func == (a: Danger.BitBucketServer, b: Danger.BitBucketServer) -> Swift.Bool
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.BitBucketServer {
+  public struct Activity : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let createdAt: Swift.Int
+    public let user: Danger.BitBucketServer.User
+    public let action: Swift.String
+    public let commentAction: Swift.String?
+    public static func == (a: Danger.BitBucketServer.Activity, b: Danger.BitBucketServer.Activity) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct Comment : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let createdAt: Swift.Int
+    public let user: Danger.BitBucketServer.User
+    public let action: Swift.String
+    public let fromHash: Swift.String?
+    public let previousFromHash: Swift.String?
+    public let toHash: Swift.String?
+    public let previousToHash: Swift.String?
+    public let commentAction: Swift.String?
+    public let comment: Danger.BitBucketServer.Comment.Detail?
+    public struct Detail : Swift.Decodable, Swift.Equatable {
+      public let id: Swift.Int
+      public let version: Swift.Int
+      public let text: Swift.String
+      public let author: Danger.BitBucketServer.User
+      public let createdAt: Swift.Int
+      public let updatedAt: Swift.Int
+      public let comments: [Danger.BitBucketServer.Comment.Detail]
+      public let properties: Danger.BitBucketServer.Comment.Detail.InnerProperties
+      public let tasks: [Danger.BitBucketServer.Comment.Detail.Task]
+      public struct Task : Swift.Decodable, Swift.Equatable {
+        public let id: Swift.Int
+        public let createdAt: Swift.Int
+        public let text: Swift.String
+        public let state: Swift.String
+        public let author: Danger.BitBucketServer.User
+        public static func == (a: Danger.BitBucketServer.Comment.Detail.Task, b: Danger.BitBucketServer.Comment.Detail.Task) -> Swift.Bool
+        public init(from decoder: any Swift.Decoder) throws
+      }
+      public struct InnerProperties : Swift.Decodable, Swift.Equatable {
+        public let repositoryId: Swift.Int
+        public let issues: [Swift.String]?
+        public static func == (a: Danger.BitBucketServer.Comment.Detail.InnerProperties, b: Danger.BitBucketServer.Comment.Detail.InnerProperties) -> Swift.Bool
+        public init(from decoder: any Swift.Decoder) throws
+      }
+      public static func == (a: Danger.BitBucketServer.Comment.Detail, b: Danger.BitBucketServer.Comment.Detail) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public static func == (a: Danger.BitBucketServer.Comment, b: Danger.BitBucketServer.Comment) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct Commit : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.String
+    public let displayId: Swift.String
+    public let author: Danger.BitBucketServer.User
+    public let authorTimestamp: Swift.Int
+    public let committer: Danger.BitBucketServer.User?
+    public let committerTimestamp: Swift.Int?
+    public let message: Swift.String
+    public let parents: [Danger.BitBucketServer.Commit.Parent]
+    public struct Parent : Swift.Decodable, Swift.Equatable {
+      public let id: Swift.String
+      public let displayId: Swift.String
+      public static func == (a: Danger.BitBucketServer.Commit.Parent, b: Danger.BitBucketServer.Commit.Parent) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public static func == (a: Danger.BitBucketServer.Commit, b: Danger.BitBucketServer.Commit) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct PullRequest : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let version: Swift.Int
+    public let title: Swift.String
+    public let description: Swift.String?
+    public let state: Swift.String
+    public let open: Swift.Bool
+    public let closed: Swift.Bool
+    public let createdAt: Swift.Int
+    public let updatedAt: Swift.Int?
+    public let fromRef: Danger.BitBucketServer.MergeRef
+    public let toRef: Danger.BitBucketServer.MergeRef
+    public let isLocked: Swift.Bool
+    public let author: Danger.BitBucketServer.PullRequest.Participant
+    public let reviewers: [Danger.BitBucketServer.PullRequest.Reviewer]
+    public let participants: [Danger.BitBucketServer.PullRequest.Participant]
+    public struct Participant : Swift.Decodable, Swift.Equatable {
+      public let user: Danger.BitBucketServer.User
+      public static func == (a: Danger.BitBucketServer.PullRequest.Participant, b: Danger.BitBucketServer.PullRequest.Participant) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public struct Reviewer : Swift.Decodable, Swift.Equatable {
+      public let user: Danger.BitBucketServer.User
+      public let approved: Swift.Bool
+      public let lastReviewedCommit: Swift.String?
+      public static func == (a: Danger.BitBucketServer.PullRequest.Reviewer, b: Danger.BitBucketServer.PullRequest.Reviewer) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public static func == (a: Danger.BitBucketServer.PullRequest, b: Danger.BitBucketServer.PullRequest) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct MergeRef : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.String
+    public let displayId: Swift.String
+    public let latestCommit: Swift.String
+    public let repository: Danger.BitBucketServer.Repo
+    public static func == (a: Danger.BitBucketServer.MergeRef, b: Danger.BitBucketServer.MergeRef) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct Repo : Swift.Decodable, Swift.Equatable {
+    public let name: Swift.String?
+    public let slug: Swift.String
+    public let scmId: Swift.String
+    public let isPublic: Swift.Bool
+    public let forkable: Swift.Bool
+    public let project: Danger.BitBucketServer.Project
+    public static func == (a: Danger.BitBucketServer.Repo, b: Danger.BitBucketServer.Repo) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct Project : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int
+    public let key: Swift.String
+    public let name: Swift.String
+    public let isPublic: Swift.Bool?
+    public let type: Swift.String
+    public static func == (a: Danger.BitBucketServer.Project, b: Danger.BitBucketServer.Project) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Danger.BitBucketServer {
+  public struct User : Swift.Decodable, Swift.Equatable {
+    public let id: Swift.Int?
+    public let name: Swift.String
+    public let displayName: Swift.String?
+    public let emailAddress: Swift.String?
+    public let active: Swift.Bool?
+    public let slug: Swift.String?
+    public let type: Swift.String?
+    public static func == (a: Danger.BitBucketServer.User, b: Danger.BitBucketServer.User) -> Swift.Bool
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+extension Foundation.DateFormatter {
+  public static var defaultDateFormatter: Foundation.DateFormatter {
+    get
+  }
+  public static var onlyDateDateFormatter: Foundation.DateFormatter {
+    get
+  }
+  public static func dateFormatterHandler(_ decoder: any Swift.Decoder) throws -> Foundation.Date
+}
+public enum Coverage {
+  public enum CoveragePathType {
+    case xcresultBundle(Swift.String)
+    case derivedDataFolder(Swift.String)
+  }
+  public static func xcodeBuildCoverage(_ coveragePathType: Danger.Coverage.CoveragePathType, minimumCoverage: Swift.Float, excludedTargets: [Swift.String] = [], hideProjectCoverage: Swift.Bool = false)
+  public static func xcodeBuildCoverage(_ coveragePathType: Danger.Coverage.CoveragePathType, minimumCoverage: Swift.Float, excludedTargets: [Danger.ExcludedTarget], hideProjectCoverage: Swift.Bool = false)
+  public static func spmCoverage(spmCoverageFolder: Swift.String = ".build/debug/codecov", minimumCoverage: Swift.Float)
+}
+public enum ExcludedTarget : Swift.Equatable {
+  case exact(Swift.String)
+  case regex(Swift.String)
+  public static func == (a: Danger.ExcludedTarget, b: Danger.ExcludedTarget) -> Swift.Bool
+}
+public struct Git : Swift.Decodable, Swift.Equatable {
+  public let modifiedFiles: [Danger.File]
+  public let createdFiles: [Danger.File]
+  public let deletedFiles: [Danger.File]
+  public let commits: [Danger.Git.Commit]
+  public static func == (a: Danger.Git, b: Danger.Git) -> Swift.Bool
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.Git {
+  public struct Commit : Swift.Equatable {
+    public struct Author : Swift.Equatable {
+      public let name: Swift.String
+      public let email: Swift.String
+      public let date: Swift.String
+      public static func == (a: Danger.Git.Commit.Author, b: Danger.Git.Commit.Author) -> Swift.Bool
+    }
+    public let sha: Swift.String?
+    public let author: Danger.Git.Commit.Author
+    public let committer: Danger.Git.Commit.Author
+    public let message: Swift.String
+    public let parents: [Swift.String]?
+    public let url: Swift.String?
+    public static func == (a: Danger.Git.Commit, b: Danger.Git.Commit) -> Swift.Bool
+  }
+}
+extension Danger.Git.Commit : Swift.Decodable {
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Danger.Git.Commit.Author : Swift.Decodable {
+  public init(from decoder: any Swift.Decoder) throws
+}
+public typealias ResultsFilter = (Danger.Result) -> Swift.Bool
+@_hasMissingDesignatedInitializers final public class XCodeSummary {
+  final public var warningsCount: Swift.Int {
+    get
+  }
+  final public var filteredWarningCount: Swift.Int {
+    get
+  }
+  final public var errorsCount: Swift.Int {
+    get
+  }
+  final public var filteredErrorCount: Swift.Int {
+    get
+  }
+  convenience public init(filePath: Swift.String, resultsFilter: Danger.ResultsFilter? = nil)
+  final public func report()
+  @objc deinit
+}
+extension Danger.DangerDSL {
+  public var fails: [Danger.Violation] {
+    get
+  }
+  public var warnings: [Danger.Violation] {
+    get
+  }
+  public var messages: [Danger.Violation] {
+    get
+  }
+  public var markdowns: [Danger.Violation] {
+    get
+  }
+  public var meta: Danger.Meta {
+    get
+  }
+  public func warn(_ message: Swift.String)
+  public func warn(message: Swift.String, file: Swift.String, line: Swift.Int)
+  public func fail(_ message: Swift.String)
+  public func fail(message: Swift.String, file: Swift.String, line: Swift.Int)
+  public func message(_ message: Swift.String)
+  public func message(message: Swift.String, file: Swift.String, line: Swift.Int)
+  public func markdown(_ message: Swift.String)
+  public func markdown(message: Swift.String, file: Swift.String, line: Swift.Int)
+  public func suggestion(code: Swift.String, file: Swift.String, line: Swift.Int)
+  public func meta(_ meta: Danger.Meta)
+}
+public var fails: [Danger.Violation] {
+  get
+}
+public var warnings: [Danger.Violation] {
+  get
+}
+public var messages: [Danger.Violation] {
+  get
+}
+public var markdowns: [Danger.Violation] {
+  get
+}
+public func warn(_ message: Swift.String)
+public func warn(message: Swift.String, file: Swift.String, line: Swift.Int)
+public func fail(_ message: Swift.String)
+public func fail(message: Swift.String, file: Swift.String, line: Swift.Int)
+public func message(_ message: Swift.String)
+public func message(message: Swift.String, file: Swift.String, line: Swift.Int)
+public func markdown(_ message: Swift.String)
+public func markdown(message: Swift.String, file: Swift.String, line: Swift.Int)
+public func suggestion(code: Swift.String, file: Swift.String, line: Swift.Int)
+extension Danger.SwiftLintViolation.Severity : Swift.Equatable {}
+extension Danger.SwiftLintViolation.Severity : Swift.Hashable {}
+extension Danger.SwiftLintViolation.Severity : Swift.RawRepresentable {}
+extension Danger.GitLab.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.State : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.State : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.State : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.Milestone.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.Milestone.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.Milestone.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.Milestone.State : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.Milestone.State : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.Milestone.State : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.TimeStats.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.TimeStats.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.TimeStats.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.Pipeline.Status : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.Pipeline.Status : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.Pipeline.Status : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.Pipeline.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.Pipeline.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.Pipeline.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.MergeRequest.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.MergeRequest.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.MergeRequest.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.User.CodingKeys : Swift.Equatable {}
+extension Danger.GitLab.User.CodingKeys : Swift.Hashable {}
+extension Danger.GitLab.User.CodingKeys : Swift.RawRepresentable {}
+extension Danger.GitLab.User.State : Swift.Equatable {}
+extension Danger.GitLab.User.State : Swift.Hashable {}
+extension Danger.GitLab.User.State : Swift.RawRepresentable {}
+extension Danger.Result.Category : Swift.Equatable {}
+extension Danger.Result.Category : Swift.Hashable {}
+extension Danger.BitBucketCloud.PullRequest.State : Swift.Equatable {}
+extension Danger.BitBucketCloud.PullRequest.State : Swift.Hashable {}
+extension Danger.BitBucketCloud.PullRequest.State : Swift.RawRepresentable {}
+extension Danger.BitBucketCloud.PullRequest.Participant.Role : Swift.Equatable {}
+extension Danger.BitBucketCloud.PullRequest.Participant.Role : Swift.Hashable {}
+extension Danger.BitBucketCloud.PullRequest.Participant.Role : Swift.RawRepresentable {}
+extension Danger.GitHub.PullRequest.PullRequestState : Swift.Equatable {}
+extension Danger.GitHub.PullRequest.PullRequestState : Swift.Hashable {}
+extension Danger.GitHub.PullRequest.PullRequestState : Swift.RawRepresentable {}
+extension Danger.GitHub.User.UserType : Swift.Equatable {}
+extension Danger.GitHub.User.UserType : Swift.Hashable {}
+extension Danger.GitHub.User.UserType : Swift.RawRepresentable {}
+extension Danger.GitHub.Review.State : Swift.Equatable {}
+extension Danger.GitHub.Review.State : Swift.Hashable {}
+extension Danger.GitHub.Review.State : Swift.RawRepresentable {}
+extension Danger.GitHub.Commit.CommitData.Verification.UnverifiedReason : Swift.Equatable {}
+extension Danger.GitHub.Commit.CommitData.Verification.UnverifiedReason : Swift.Hashable {}
+extension Danger.GitHub.Commit.CommitData.Verification.UnverifiedReason : Swift.RawRepresentable {}
+extension Danger.GitHub.Issue.State : Swift.Equatable {}
+extension Danger.GitHub.Issue.State : Swift.Hashable {}
+extension Danger.GitHub.Issue.State : Swift.RawRepresentable {}
+extension Danger.GitHub.Milestone.State : Swift.Equatable {}
+extension Danger.GitHub.Milestone.State : Swift.Hashable {}
+extension Danger.GitHub.Milestone.State : Swift.RawRepresentable {}
+extension Danger.FileType : Swift.Hashable {}
+extension Danger.FileType : Swift.RawRepresentable {}
