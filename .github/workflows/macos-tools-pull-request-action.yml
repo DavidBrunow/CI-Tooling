@@ -1,0 +1,40 @@
+# Common things to do in a macOS tool CI pipeline
+name: macOS Tools Pull Request
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          ./build_and_copy.sh .
+  test:
+    runs-on: macos-14
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TARGET_BRANCH: ${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run Tests
+        run: |
+          git clone -b apple https://github.com/DavidBrunow/CI-Tooling.git CI-Tooling --depth 1
+          ./CI-Tooling/unpack.sh
+          ./create_fixtures.sh
+          gem install xcpretty
+          gem install xcpretty-json-formatter
+          defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+          brew install jq
+          export SCHEME=`xcodebuild -list -json | jq -r '.workspace.schemes[0]'`
+          xcodebuild test -scheme $SCHEME -destination "OS=13.0" -derivedDataPath ../DerivedDataTests -enableCodeCoverage YES -resultBundlePath ../DerivedDataTests/coverage.xcresult | XCPRETTY_JSON_FILE_OUTPUT=result.json xcpretty -f `xcpretty-json-formatter`
+          defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool NO
+          brew install npm
+          npm install -g danger
+          ./CI-Tooling/swift-conventional-commit-parser pull-request -t "origin/$TARGET_BRANCH" 2> swift_conventional_commit_parser_error.txt > release_notes.json || true
+          ./CI-Tooling/danger-swift ci
+

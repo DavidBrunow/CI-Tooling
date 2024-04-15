@@ -1,0 +1,43 @@
+# Common things to do in a macOS tool CI pipeline
+name: macOS Tools Release
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Release
+        run: |
+          git clone -b apple https://github.com/DavidBrunow/CI-Tooling.git CI-Tooling --depth 1
+          ./CI-Tooling/unpack.sh
+          brew install jq
+          # Run conventional commit parser
+          CONVENTIONAL_COMMIT_PARSER_OUTPUT=`./CI-Tooling/swift-conventional-commit-parser release`
+          BUMP_TYPE=`jq -r '.bumpType' <<<"$CONVENTIONAL_COMMIT_PARSER_OUTPUT"`
+          if [[ "$BUMP_TYPE" == "none" ]]; then exit 0; fi
+          VERSION=`jq -r '.version' <<<"$CONVENTIONAL_COMMIT_PARSER_OUTPUT"`
+          RELEASE_NOTES=`jq -r '.releaseNotes' <<<"$CONVENTIONAL_COMMIT_PARSER_OUTPUT"`
+          # Bump version
+          FILE_THAT_NEEDS_VERSION_UPDATE=`grep -lr "@main" ./Sources`
+          sed -i '' -E "s/(version: \").*(\")/\1something\2/" $FILE_THAT_NEEDS_VERSION_UPDATE
+          # Update CHANGELOG
+          RELEASE_NOTES=`sed 's/$/\\\\/g' <<<"$RELEASE_NOTES"`
+          sed -i '' -f - ./CHANGELOG.md <<EOF
+          7 i\\
+          \\
+          $RELEASE_NOTES
+          EOF
+          # Push changes without running CI
+          git add $FILE_THAT_NEEDS_VERSION_UPDATE
+          git add CHANGELOG.md
+          git commit -m "Release $VERSION [skip ci]"
+          # Add tag
+          git tag "$VERSION"
+          git push origin
+          git push origin "$VERSION"
+
