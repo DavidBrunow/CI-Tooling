@@ -30,7 +30,7 @@ jobs:
           RELEASE_NOTES=`jq -r '.releaseNotes' <<<"$CONVENTIONAL_COMMIT_PARSER_OUTPUT"`
           # Bump version
           FILE_THAT_NEEDS_VERSION_UPDATE=`grep -lr "@main" ./Sources`
-          sed -i '' -E "s/(version: \").*(\")/\1something\2/" $FILE_THAT_NEEDS_VERSION_UPDATE
+          sed -i '' -E "s/(version: \").*(\")/\1$VERSION\2/" $FILE_THAT_NEEDS_VERSION_UPDATE
           # Update CHANGELOG
           RELEASE_NOTES=`sed 's/$/\\\\/g' <<<"$RELEASE_NOTES"`
           sed -i '' -f - ./CHANGELOG.md <<EOF
